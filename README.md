@@ -1,15 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>MLBB Bulgaria National</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
@@ -451,10 +440,30 @@
         .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
         .empty-state .ico { font-size: 44px; margin-bottom: 12px; }
 
-        @media (max-width: 680px) {
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
-            .roles-grid { grid-template-columns: repeat(3, 1fr); }
+            .roles-grid { grid-template-columns: repeat(2, 1fr); }
+            .countdown-wrap { padding: 18px 12px; }
+            .cd-unit { min-width: 60px; }
+            .cd-num { font-size: 42px; letter-spacing: -1px; }
+            .cd-sep { font-size: 32px; }
+            .cd-label { font-size: 9px; letter-spacing: 1px; }
+            .tabs { gap: 4px; }
+            .tab-btn { padding: 8px 8px; font-size: 11px; min-width: 80px; }
+            .form-card { padding: 18px 14px; }
+            header h1 { font-size: 28px; letter-spacing: 1px; }
+            .container { padding: 0 12px 40px; }
+            header { padding: 28px 12px 20px; }
+            .btn-group { flex-direction: column; }
+            .btn-group button { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .roles-grid { grid-template-columns: 1fr 1fr; }
+            .cd-num { font-size: 34px; }
+            .cd-unit { min-width: 46px; }
+            .cd-sep { font-size: 26px; margin: 0 2px; }
+            header h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -527,7 +536,7 @@
                 <div id="regMessage" class="message"></div>
 
                 <!-- ▼▼▼ Formspree AJAX integration ▼▼▼ -->
-                <form id="registrationForm">
+                <form id="registrationForm" onsubmit="handleSubmit(event)">
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="ign">IGN (In-Game Name) *</label>
@@ -697,7 +706,7 @@ function switchTab(e, tabName) {
 // ══════════════════════════════════════════════
 //  FORMSPREE AJAX SUBMIT
 // ══════════════════════════════════════════════
-document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+async function handleSubmit(e) {
     e.preventDefault();
 
     const ign     = document.getElementById('ign').value.trim();
@@ -789,7 +798,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         submitBtn.disabled = false;
         submitBtn.textContent = '✔ Изпрати Регистрация';
     }
-});
+}
 
 function showFormAgain() {
     document.getElementById('registrationForm').reset();
@@ -963,9 +972,4 @@ function exportToCSV() {
 }
 </script>
 </body>
-</html>
-    <script  src="./script.js"></script>
-
-  </body>
-  
 </html>
