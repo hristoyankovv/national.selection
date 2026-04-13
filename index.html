@@ -34,19 +34,76 @@
             content: '';
             position: fixed; inset: 0;
             background:
-                radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,120,255,0.10) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 60% at 90% 50%, rgba(255,160,0,0.05) 0%, transparent 60%);
+                radial-gradient(ellipse 90% 50% at 50% -5%, rgba(0,100,255,0.18) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 70% at 95% 60%, rgba(255,140,0,0.10) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 50% at 5% 80%, rgba(0,200,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 50% 110%, rgba(0,60,180,0.15) 0%, transparent 60%);
             pointer-events: none; z-index: 0;
+            animation: bgPulse 8s ease-in-out infinite alternate;
         }
 
+        @keyframes bgPulse {
+            0%   { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        /* Animated grid */
         .grid-bg {
             position: fixed; inset: 0; z-index: 0;
             background-image:
-                linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
             pointer-events: none;
+            animation: gridDrift 20s linear infinite;
         }
+
+        @keyframes gridDrift {
+            0%   { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* Flying sparks canvas */
+        #sparksCanvas {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+        }
+
+        /* Scanline overlay */
+        .scanlines {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+        }
+
+        /* Corner decorations */
+        .corner-deco {
+            position: fixed; width: 120px; height: 120px;
+            pointer-events: none; z-index: 0;
+        }
+        .corner-deco::before, .corner-deco::after {
+            content: ''; position: absolute;
+            background: linear-gradient(var(--accent2), var(--accent));
+        }
+        .corner-deco::before { width: 2px; height: 60px; }
+        .corner-deco::after  { width: 60px; height: 2px; }
+        .corner-tl { top: 20px; left: 20px; }
+        .corner-tl::before { top: 0; left: 0; }
+        .corner-tl::after  { top: 0; left: 0; }
+        .corner-tr { top: 20px; right: 20px; transform: scaleX(-1); }
+        .corner-tr::before { top: 0; left: 0; }
+        .corner-tr::after  { top: 0; left: 0; }
+        .corner-br { bottom: 20px; right: 20px; transform: scale(-1); }
+        .corner-br::before { top: 0; left: 0; }
+        .corner-br::after  { top: 0; left: 0; }
+        .corner-bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
+        .corner-bl::before { top: 0; left: 0; }
+        .corner-bl::after  { top: 0; left: 0; }
 
         .container {
             max-width: 1100px;
@@ -58,41 +115,76 @@
         /* ── HEADER ── */
         header {
             text-align: center;
-            padding: 44px 20px 28px;
+            padding: 52px 20px 36px;
             border-bottom: 1px solid var(--border);
             margin-bottom: 28px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute; bottom: -1px; left: 20%; right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), var(--gold), var(--accent), transparent);
+            animation: headerLine 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes headerLine {
+            0%   { left: 30%; right: 30%; opacity: .5; }
+            100% { left: 10%; right: 10%; opacity: 1; }
         }
 
         .flag-line {
             display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
+            background: rgba(0,200,255,0.05);
+            border: 1px solid rgba(0,200,255,0.2);
             border-radius: 40px;
-            padding: 5px 18px;
+            padding: 6px 20px;
             font-size: 11px;
-            color: var(--muted);
-            margin-bottom: 16px;
-            letter-spacing: 3px;
+            color: var(--accent);
+            margin-bottom: 18px;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(0,200,255,0.1), inset 0 0 20px rgba(0,200,255,0.03);
+            animation: flagPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes flagPulse {
+            0%,100% { box-shadow: 0 0 20px rgba(0,200,255,0.1), inset 0 0 20px rgba(0,200,255,0.03); }
+            50%     { box-shadow: 0 0 30px rgba(0,200,255,0.25), inset 0 0 20px rgba(0,200,255,0.07); }
         }
 
         header h1 {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(28px, 6vw, 52px);
+            font-size: clamp(30px, 7vw, 58px);
             font-weight: 700;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #fff 20%, var(--gold) 60%, var(--gold2));
+            background: linear-gradient(135deg, #ffffff 0%, #ffe066 40%, var(--gold) 60%, var(--gold2) 80%, #ff8c00 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             line-height: 1.1;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 30px rgba(255,200,0,0.3));
+            animation: titleGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0%   { filter: drop-shadow(0 0 20px rgba(255,200,0,0.2)); }
+            100% { filter: drop-shadow(0 0 40px rgba(255,200,0,0.5)); }
         }
 
         header p {
             color: var(--muted);
             font-size: 13px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
+        }
+
+        /* ── GLOW LINES ── */
+        .glow-line {
+            width: 100%; height: 1px; margin: 0 auto 0;
+            background: linear-gradient(90deg, transparent 0%, var(--accent2) 30%, var(--gold) 50%, var(--accent2) 70%, transparent 100%);
+            opacity: 0.4;
         }
 
         /* ── COUNTDOWN ── */
@@ -214,11 +306,20 @@
 
         /* ── FORM CARD ── */
         .form-card {
-            background: var(--panel);
+            background: linear-gradient(135deg, rgba(13,21,32,0.95) 0%, rgba(11,23,40,0.95) 100%);
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 28px;
             margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(0,200,255,0.05);
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,200,255,0.5), transparent);
         }
 
         .card-title {
@@ -259,7 +360,7 @@
 
         input:focus, select:focus, textarea:focus {
             border-color: var(--accent2);
-            box-shadow: 0 0 0 3px rgba(0,119,255,0.12);
+            box-shadow: 0 0 0 3px rgba(0,119,255,0.15), 0 0 20px rgba(0,119,255,0.1);
         }
 
         select option { background: var(--panel2); }
@@ -311,11 +412,21 @@
         }
 
         .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            background: linear-gradient(135deg, #ffe040, var(--gold), var(--gold2));
             color: #000;
+            position: relative; overflow: hidden;
         }
 
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,165,0,0.35); }
+        .btn-gold::after {
+            content: '';
+            position: absolute; top: -50%; left: -60%; width: 40%; height: 200%;
+            background: rgba(255,255,255,0.25);
+            transform: skewX(-20deg);
+            transition: left 0.5s;
+        }
+
+        .btn-gold:hover::after { left: 120%; }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,165,0,0.5), 0 0 60px rgba(255,200,0,0.2); }
         .btn-gold:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .btn-blue {
@@ -465,16 +576,66 @@
             .cd-sep { font-size: 26px; margin: 0 2px; }
             header h1 { font-size: 22px; }
         }
+
+        /* ── ENTRANCE ANIMATIONS ── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        header       { animation: fadeInUp 0.7s ease both; }
+        .countdown-section { animation: fadeInUp 0.7s 0.15s ease both; }
+        .tabs        { animation: fadeInUp 0.7s 0.25s ease both; }
+        .form-card   { animation: fadeInUp 0.7s 0.35s ease both; }
+
+        /* ── ROLE CHECKBOX GLOW ON CHECK ── */
+        .role-checkbox:has(input:checked) {
+            border-color: var(--gold);
+            background: rgba(255,215,0,0.06);
+            box-shadow: 0 0 14px rgba(255,215,0,0.2), inset 0 0 10px rgba(255,215,0,0.04);
+        }
+
+        /* ── CARD TITLE UNDERLINE ── */
+        .card-title::after {
+            content: '';
+            display: block;
+            margin-top: 14px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent2), var(--gold), transparent);
+        }
+        .card-title { border-bottom: none !important; padding-bottom: 0 !important; }
+
+        /* ── TAB GLOW ── */
+        .tab-btn.active {
+            box-shadow: 0 0 20px rgba(0,119,255,0.35), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        /* ── INPUT GLOW ON FILL ── */
+        input:not(:placeholder-shown), select:not([value=""]) {
+            border-color: rgba(0,200,255,0.25);
+        }
+
+        /* ── SUCCESS STATE GLOW ── */
+        .success-state h3 {
+            text-shadow: 0 0 30px rgba(255,215,0,0.5);
+        }
     </style>
 </head>
 <body>
+<canvas id="sparksCanvas"></canvas>
+<div class="scanlines"></div>
 <div class="grid-bg"></div>
+<div class="corner-deco corner-tl"></div>
+<div class="corner-deco corner-tr"></div>
+<div class="corner-deco corner-br"></div>
+<div class="corner-deco corner-bl"></div>
 
 <div class="container">
     <header>
         <div class="flag-line">🇧🇬 Bulgaria Esports · Official Selection</div>
         <h1>🎮 MLBB National Team</h1>
         <p>Български национален отбор - официална регистрация</p>
+        <div class="glow-line" style="margin-top:20px;"></div>
     </header>
 
     <!-- COUNTDOWN -->
@@ -786,6 +947,352 @@ async function handleSubmit(e) {
             status: 'pending',
             registeredAt: new Date().toLocaleString('bg-BG')
         });
+        localStorage.setItem('mlbb_participants', JSON.stringify(participants));
+        updateStats();
+
+        // Show success screen
+        document.getElementById('formWrapper').style.display = 'none';
+        document.getElementById('successState').classList.add('show');
+
+    } catch (err) {
+        showMessage('regMessage', '❌ Няма връзка. Провери интернета и опитай пак.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✔ Изпрати Регистрация';
+    }
+}
+
+function showFormAgain() {
+    document.getElementById('registrationForm').reset();
+    document.getElementById('formWrapper').style.display = 'block';
+    document.getElementById('successState').classList.remove('show');
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.textContent = '✔ Изпрати Регистрация';
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function getSelectedRoles() {
+    // Map each role to its exact checkbox id
+    const roleMap = {
+        'Mid laner':  'role_mid',
+        'Marksman':   'role_marksman',
+        'Roamer':     'role_roamer',
+        'Exp laner':  'role_exp',
+        'Jungle':     'role_jungle'
+    };
+    return Object.entries(roleMap)
+        .filter(([role, id]) => {
+            const el = document.getElementById(id);
+            return el && el.checked;
+        })
+        .map(([role]) => role);
+}
+
+function showMessage(elId, msg, type) {
+    const el = document.getElementById(elId);
+    el.textContent = msg;
+    el.className = 'message show ' + type;
+    setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+function clearForm() {
+    document.getElementById('registrationForm').reset();
+}
+
+function updateStats() {
+    // Stats display replaced by countdown timer
+}
+
+// ══════════════════════════════════════════════
+//  COUNTDOWN TIMER
+// ══════════════════════════════════════════════
+(function initCountdown() {
+    const DEADLINE = new Date('2026-04-17T23:59:59');
+    const elDays  = document.getElementById('cdDays');
+    const elHours = document.getElementById('cdHours');
+    const elMins  = document.getElementById('cdMins');
+    const elSecs  = document.getElementById('cdSecs');
+    const wrap    = document.getElementById('cdWrap');
+    const pContainer = document.getElementById('cdParticles');
+    if (pContainer) {
+        for (let i = 0; i < 18; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const left = Math.random() * 100;
+            const dur  = 4 + Math.random() * 6;
+            const delay = Math.random() * 6;
+            const drift = (Math.random() - 0.5) * 60;
+            p.style.cssText = 'left:'+left+'%;bottom:0;animation-duration:'+dur+'s;animation-delay:'+delay+'s;--drift:'+drift+'px';
+            if (i % 3 === 1) p.style.background = 'rgba(255,215,0,0.5)';
+            if (i % 3 === 2) p.style.background = 'rgba(0,119,255,0.5)';
+            pContainer.appendChild(p);
+        }
+    }
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function tick(el, newVal) {
+        if (!el || el.textContent === newVal) return;
+        el.textContent = newVal;
+        el.classList.remove('tick');
+        void el.offsetWidth;
+        el.classList.add('tick');
+    }
+    function update() {
+        const diff = new Date('2026-04-17T23:59:59') - new Date();
+        if (diff <= 0) {
+            if (wrap) wrap.innerHTML = '<div class="cd-expired">🔒 РЕГИСТРАЦИЯТА Е ПРИКЛЮЧИЛА</div>';
+            return;
+        }
+        tick(elDays,  pad(Math.floor(diff / 86400000)));
+        tick(elHours, pad(Math.floor((diff % 86400000) / 3600000)));
+        tick(elMins,  pad(Math.floor((diff % 3600000) / 60000)));
+        tick(elSecs,  pad(Math.floor((diff % 60000) / 1000)));
+        if (diff < 86400000 && wrap) wrap.classList.add('urgent');
+    }
+    update();
+    setInterval(update, 1000);
+})();
+
+function getStatusLabel(s) {
+    return { pending:'⏳ Чакащ', approved:'✔ Одобрен', national:'🇧🇬 Национален', reserve:'🔵 Резерва' }[s] || s;
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN PANEL
+// ══════════════════════════════════════════════
+function renderAdminPanel() {
+    const tbody = document.getElementById('adminBody');
+    const empty = document.getElementById('emptyAdmin');
+
+    if (!participants.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = participants.map(p => `
+        <tr>
+            <td><strong>${p.ign}</strong></td>
+            <td>${p.discord}</td>
+            <td style="color:var(--muted)">${p.facebook || '—'}</td>
+            <td><span class="rank-badge">${p.rank}</span></td>
+            <td>${p.winrate}%</td>
+            <td>${p.roles.map(r=>`<span class="role-badge">${r}</span>`).join('')}</td>
+            <td>
+                <select onchange="setStatus(${p.id},this.value)" style="padding:4px 8px;font-size:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:5px">
+                    <option value="pending"  ${p.status==='pending' ?'selected':''}>⏳ Чакащ</option>
+                    <option value="approved" ${p.status==='approved'?'selected':''}>✔ Одобрен</option>
+                    <option value="national" ${p.status==='national'?'selected':''}>🇧🇬 Национален</option>
+                    <option value="reserve"  ${p.status==='reserve' ?'selected':''}>🔵 Резерва</option>
+                </select>
+            </td>
+            <td>
+                <button class="btn-red" onclick="deleteParticipant(${p.id})">🗑 Изтрий</button>
+            </td>
+        </tr>`).join('');
+}
+
+function setStatus(id, status) {
+    const p = participants.find(x => x.id === id);
+    if (!p) return;
+    p.status = status;
+    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
+    updateStats(); renderParticipants(); renderAdminPanel();
+}
+
+function deleteParticipant(id) {
+    if (!confirm('Сигурен ли си?')) return;
+    participants = participants.filter(p => p.id !== id);
+    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
+    updateStats(); renderParticipants(); renderAdminPanel();
+}
+
+function approveAllPending() {
+    participants.forEach(p => { if (p.status === 'pending') p.status = 'approved'; });
+    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
+    updateStats(); renderAdminPanel(); renderParticipants();
+    alert('✔ Всички чакащи участници са одобрени!');
+}
+
+function resetAllData() {
+    if (!confirm('⚠️ Това ще изтрие ВСИЧКИ локални данни! Formspree записите остават. Сигурен ли си?')) return;
+    participants = [];
+    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
+    updateStats(); renderAdminPanel(); renderParticipants();
+}
+
+function exportToCSV() {
+    const hdr = ['IGN','Discord','Facebook','Ранг','Win Rate','Роли','Опит','Герои','Мотивация','Статус','Дата'];
+    const rows = participants.map(p => [
+        p.ign, p.discord, p.facebook, p.rank, p.winrate,
+        p.roles.join('|'), p.experience, p.heroes, p.extra, p.status, p.registeredAt
+    ]);
+    const csv = [hdr, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+    a.download = 'mlbb_participants_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+}
+
+// ══════════════════════════════════════════════
+//  SPARKS / PARTICLES CANVAS ENGINE
+// ══════════════════════════════════════════════
+(function initSparks() {
+    const canvas = document.getElementById('sparksCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = [
+        'rgba(0,200,255,',
+        'rgba(0,119,255,',
+        'rgba(255,215,0,',
+        'rgba(255,140,0,',
+        'rgba(180,220,255,',
+    ];
+
+    class Spark {
+        constructor() { this.reset(true); }
+        reset(initial) {
+            this.x  = Math.random() * canvas.width;
+            this.y  = initial ? Math.random() * canvas.height : canvas.height + 10;
+            this.vx = (Math.random() - 0.5) * 0.8;
+            this.vy = -(0.4 + Math.random() * 1.2);
+            this.size   = 0.5 + Math.random() * 2;
+            this.color  = COLORS[Math.floor(Math.random() * COLORS.length)];
+            this.alpha  = 0;
+            this.maxAlpha = 0.4 + Math.random() * 0.5;
+            this.life   = 0;
+            this.maxLife = 120 + Math.random() * 180;
+            this.twinkle = Math.random() * Math.PI * 2;
+            // some sparks have a trail
+            this.trail  = Math.random() > 0.7;
+            this.history = [];
+        }
+        update() {
+            this.life++;
+            this.twinkle += 0.08;
+            if (this.life < 30) this.alpha = (this.life / 30) * this.maxAlpha;
+            else if (this.life > this.maxLife - 40) this.alpha = ((this.maxLife - this.life) / 40) * this.maxAlpha;
+            else this.alpha = this.maxAlpha * (0.7 + 0.3 * Math.sin(this.twinkle));
+
+            if (this.trail) {
+                this.history.push({x: this.x, y: this.y});
+                if (this.history.length > 8) this.history.shift();
+            }
+
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx += (Math.random() - 0.5) * 0.04;
+            if (this.life > this.maxLife) this.reset(false);
+        }
+        draw() {
+            // Draw trail
+            if (this.trail && this.history.length > 1) {
+                for (let i = 1; i < this.history.length; i++) {
+                    const a = (i / this.history.length) * this.alpha * 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(this.history[i-1].x, this.history[i-1].y);
+                    ctx.lineTo(this.history[i].x, this.history[i].y);
+                    ctx.strokeStyle = this.color + a + ')';
+                    ctx.lineWidth = this.size * (i / this.history.length);
+                    ctx.stroke();
+                }
+            }
+            // Draw spark
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color + this.alpha + ')';
+            ctx.fill();
+            // Glow
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+            const grd = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+            grd.addColorStop(0, this.color + (this.alpha * 0.4) + ')');
+            grd.addColorStop(1, this.color + '0)');
+            ctx.fillStyle = grd;
+            ctx.fill();
+        }
+    }
+
+    class ShootingStar {
+        constructor() { this.reset(); }
+        reset() {
+            this.x     = Math.random() * canvas.width * 1.2;
+            this.y     = Math.random() * canvas.height * 0.4;
+            this.len   = 80 + Math.random() * 150;
+            this.speed = 8 + Math.random() * 10;
+            this.angle = Math.PI / 6 + (Math.random() - 0.5) * 0.3;
+            this.alpha = 0;
+            this.life  = 0;
+            this.maxLife = 40 + Math.random() * 30;
+            this.delay = Math.random() * 300;
+            this.color = Math.random() > 0.5 ? '0,200,255' : '255,215,0';
+        }
+        update() {
+            if (this.delay > 0) { this.delay--; return; }
+            this.life++;
+            if (this.life < 10) this.alpha = this.life / 10;
+            else if (this.life > this.maxLife - 10) this.alpha = (this.maxLife - this.life) / 10;
+            else this.alpha = 1;
+            this.x -= Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed;
+            if (this.life > this.maxLife) this.reset();
+        }
+        draw() {
+            if (this.delay > 0) return;
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + Math.cos(this.angle) * this.len, this.y - Math.sin(this.angle) * this.len);
+            const grd = ctx.createLinearGradient(
+                this.x, this.y,
+                this.x + Math.cos(this.angle) * this.len,
+                this.y - Math.sin(this.angle) * this.len
+            );
+            grd.addColorStop(0, `rgba(${this.color},${this.alpha})`);
+            grd.addColorStop(1, `rgba(${this.color},0)`);
+            ctx.strokeStyle = grd;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    // Create particles
+    const sparks = Array.from({length: 120}, () => new Spark());
+    const stars  = Array.from({length: 4},  () => new ShootingStar());
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        sparks.forEach(s => { s.update(); s.draw(); });
+        stars.forEach(s  => { s.update(); s.draw(); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Burst on click
+    document.addEventListener('click', (e) => {
+        const burst = Array.from({length: 12}, () => {
+            const s = new Spark();
+            s.x = e.clientX; s.y = e.clientY;
+            s.vx = (Math.random() - 0.5) * 4;
+            s.vy = (Math.random() - 0.5) * 4;
+            s.alpha = 0.8; s.maxAlpha = 0.8;
+            s.size = 1.5 + Math.random() * 2;
+            s.maxLife = 40 + Math.random() * 30;
+            return s;
+        });
+        sparks.splice(0, 12, ...burst);
+    });
+})();
+</script>
+</body>
+</html>        });
         localStorage.setItem('mlbb_participants', JSON.stringify(participants));
         updateStats();
 
