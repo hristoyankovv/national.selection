@@ -81,29 +81,7 @@
             );
         }
 
-        /* Corner decorations */
-        .corner-deco {
-            position: fixed; width: 120px; height: 120px;
-            pointer-events: none; z-index: 0;
-        }
-        .corner-deco::before, .corner-deco::after {
-            content: ''; position: absolute;
-            background: linear-gradient(var(--accent2), var(--accent));
-        }
-        .corner-deco::before { width: 2px; height: 60px; }
-        .corner-deco::after  { width: 60px; height: 2px; }
-        .corner-tl { top: 20px; left: 20px; }
-        .corner-tl::before { top: 0; left: 0; }
-        .corner-tl::after  { top: 0; left: 0; }
-        .corner-tr { top: 20px; right: 20px; transform: scaleX(-1); }
-        .corner-tr::before { top: 0; left: 0; }
-        .corner-tr::after  { top: 0; left: 0; }
-        .corner-br { bottom: 20px; right: 20px; transform: scale(-1); }
-        .corner-br::before { top: 0; left: 0; }
-        .corner-br::after  { top: 0; left: 0; }
-        .corner-bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
-        .corner-bl::before { top: 0; left: 0; }
-        .corner-bl::after  { top: 0; left: 0; }
+
 
         .container {
             max-width: 1100px;
@@ -625,10 +603,7 @@
 <canvas id="sparksCanvas"></canvas>
 <div class="scanlines"></div>
 <div class="grid-bg"></div>
-<div class="corner-deco corner-tl"></div>
-<div class="corner-deco corner-tr"></div>
-<div class="corner-deco corner-br"></div>
-<div class="corner-deco corner-bl"></div>
+
 
 <div class="container">
     <header>
@@ -1075,7 +1050,7 @@ function renderAdminPanel() {
             <td style="color:var(--muted)">${p.facebook || '—'}</td>
             <td><span class="rank-badge">${p.rank}</span></td>
             <td>${p.winrate}%</td>
-            <td>${p.roles.map(r=>`<span class="role-badge">${r}</span>`).join('')}</td>
+            <td>${p.roles.map(function(r){return '<span class=\"role-badge\">'+r+'</span>';}).join('')}</td>
             <td>
                 <select onchange="setStatus(${p.id},this.value)" style="padding:4px 8px;font-size:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:5px">
                     <option value="pending"  ${p.status==='pending' ?'selected':''}>⏳ Чакащ</option>
@@ -1290,193 +1265,6 @@ function exportToCSV() {
         sparks.splice(0, 12, ...burst);
     });
 })();
-</script>
-</body>
-</html>        });
-        localStorage.setItem('mlbb_participants', JSON.stringify(participants));
-        updateStats();
-
-        // Show success screen
-        document.getElementById('formWrapper').style.display = 'none';
-        document.getElementById('successState').classList.add('show');
-
-    } catch (err) {
-        showMessage('regMessage', '❌ Няма връзка. Провери интернета и опитай пак.', 'error');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '✔ Изпрати Регистрация';
-    }
-}
-
-function showFormAgain() {
-    document.getElementById('registrationForm').reset();
-    document.getElementById('formWrapper').style.display = 'block';
-    document.getElementById('successState').classList.remove('show');
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = false;
-    btn.textContent = '✔ Изпрати Регистрация';
-}
-
-// ══════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════
-function getSelectedRoles() {
-    // Map each role to its exact checkbox id
-    const roleMap = {
-        'Mid laner':  'role_mid',
-        'Marksman':   'role_marksman',
-        'Roamer':     'role_roamer',
-        'Exp laner':  'role_exp',
-        'Jungle':     'role_jungle'
-    };
-    return Object.entries(roleMap)
-        .filter(([role, id]) => {
-            const el = document.getElementById(id);
-            return el && el.checked;
-        })
-        .map(([role]) => role);
-}
-
-function showMessage(elId, msg, type) {
-    const el = document.getElementById(elId);
-    el.textContent = msg;
-    el.className = 'message show ' + type;
-    setTimeout(() => el.classList.remove('show'), 5000);
-}
-
-function clearForm() {
-    document.getElementById('registrationForm').reset();
-}
-
-function updateStats() {
-    // Stats display replaced by countdown timer
-}
-
-// ══════════════════════════════════════════════
-//  COUNTDOWN TIMER
-// ══════════════════════════════════════════════
-(function initCountdown() {
-    const DEADLINE = new Date('2026-04-17T23:59:59');
-    const elDays  = document.getElementById('cdDays');
-    const elHours = document.getElementById('cdHours');
-    const elMins  = document.getElementById('cdMins');
-    const elSecs  = document.getElementById('cdSecs');
-    const wrap    = document.getElementById('cdWrap');
-    const pContainer = document.getElementById('cdParticles');
-    if (pContainer) {
-        for (let i = 0; i < 18; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            const left = Math.random() * 100;
-            const dur  = 4 + Math.random() * 6;
-            const delay = Math.random() * 6;
-            const drift = (Math.random() - 0.5) * 60;
-            p.style.cssText = 'left:'+left+'%;bottom:0;animation-duration:'+dur+'s;animation-delay:'+delay+'s;--drift:'+drift+'px';
-            if (i % 3 === 1) p.style.background = 'rgba(255,215,0,0.5)';
-            if (i % 3 === 2) p.style.background = 'rgba(0,119,255,0.5)';
-            pContainer.appendChild(p);
-        }
-    }
-    function pad(n) { return String(n).padStart(2, '0'); }
-    function tick(el, newVal) {
-        if (!el || el.textContent === newVal) return;
-        el.textContent = newVal;
-        el.classList.remove('tick');
-        void el.offsetWidth;
-        el.classList.add('tick');
-    }
-    function update() {
-        const diff = new Date('2026-04-17T23:59:59') - new Date();
-        if (diff <= 0) {
-            if (wrap) wrap.innerHTML = '<div class="cd-expired">🔒 РЕГИСТРАЦИЯТА Е ПРИКЛЮЧИЛА</div>';
-            return;
-        }
-        tick(elDays,  pad(Math.floor(diff / 86400000)));
-        tick(elHours, pad(Math.floor((diff % 86400000) / 3600000)));
-        tick(elMins,  pad(Math.floor((diff % 3600000) / 60000)));
-        tick(elSecs,  pad(Math.floor((diff % 60000) / 1000)));
-        if (diff < 86400000 && wrap) wrap.classList.add('urgent');
-    }
-    update();
-    setInterval(update, 1000);
-})();
-
-function getStatusLabel(s) {
-    return { pending:'⏳ Чакащ', approved:'✔ Одобрен', national:'🇧🇬 Национален', reserve:'🔵 Резерва' }[s] || s;
-}
-
-// ══════════════════════════════════════════════
-//  ADMIN PANEL
-// ══════════════════════════════════════════════
-function renderAdminPanel() {
-    const tbody = document.getElementById('adminBody');
-    const empty = document.getElementById('emptyAdmin');
-
-    if (!participants.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-    empty.style.display = 'none';
-
-    tbody.innerHTML = participants.map(p => `
-        <tr>
-            <td><strong>${p.ign}</strong></td>
-            <td>${p.discord}</td>
-            <td style="color:var(--muted)">${p.facebook || '—'}</td>
-            <td><span class="rank-badge">${p.rank}</span></td>
-            <td>${p.winrate}%</td>
-            <td>${p.roles.map(r=>`<span class="role-badge">${r}</span>`).join('')}</td>
-            <td>
-                <select onchange="setStatus(${p.id},this.value)" style="padding:4px 8px;font-size:11px;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:5px">
-                    <option value="pending"  ${p.status==='pending' ?'selected':''}>⏳ Чакащ</option>
-                    <option value="approved" ${p.status==='approved'?'selected':''}>✔ Одобрен</option>
-                    <option value="national" ${p.status==='national'?'selected':''}>🇧🇬 Национален</option>
-                    <option value="reserve"  ${p.status==='reserve' ?'selected':''}>🔵 Резерва</option>
-                </select>
-            </td>
-            <td>
-                <button class="btn-red" onclick="deleteParticipant(${p.id})">🗑 Изтрий</button>
-            </td>
-        </tr>`).join('');
-}
-
-function setStatus(id, status) {
-    const p = participants.find(x => x.id === id);
-    if (!p) return;
-    p.status = status;
-    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
-    updateStats(); renderParticipants(); renderAdminPanel();
-}
-
-function deleteParticipant(id) {
-    if (!confirm('Сигурен ли си?')) return;
-    participants = participants.filter(p => p.id !== id);
-    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
-    updateStats(); renderParticipants(); renderAdminPanel();
-}
-
-function approveAllPending() {
-    participants.forEach(p => { if (p.status === 'pending') p.status = 'approved'; });
-    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
-    updateStats(); renderAdminPanel(); renderParticipants();
-    alert('✔ Всички чакащи участници са одобрени!');
-}
-
-function resetAllData() {
-    if (!confirm('⚠️ Това ще изтрие ВСИЧКИ локални данни! Formspree записите остават. Сигурен ли си?')) return;
-    participants = [];
-    localStorage.setItem('mlbb_participants', JSON.stringify(participants));
-    updateStats(); renderAdminPanel(); renderParticipants();
-}
-
-function exportToCSV() {
-    const hdr = ['IGN','Discord','Facebook','Ранг','Win Rate','Роли','Опит','Герои','Мотивация','Статус','Дата'];
-    const rows = participants.map(p => [
-        p.ign, p.discord, p.facebook, p.rank, p.winrate,
-        p.roles.join('|'), p.experience, p.heroes, p.extra, p.status, p.registeredAt
-    ]);
-    const csv = [hdr, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
-    a.download = 'mlbb_participants_' + new Date().toISOString().slice(0,10) + '.csv';
-    a.click();
-}
 </script>
 </body>
 </html>
