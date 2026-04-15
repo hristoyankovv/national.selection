@@ -616,7 +616,7 @@
     <!-- COUNTDOWN -->
     <div class="countdown-section">
         <div class="countdown-label-top">⏰ Краен срок за регистрация</div>
-        <div class="countdown-deadline">Петък, 17 Април 2026 · 23:59</div>
+        <div class="countdown-deadline">Петък, 17 Април 2026 · 09:00</div>
         <div class="countdown-wrap" id="cdWrap">
             <div class="countdown-particles" id="cdParticles"></div>
             <div class="cd-unit">
@@ -799,15 +799,12 @@ let participants = JSON.parse(localStorage.getItem('mlbb_participants') || '[]')
 
 // ══════════════════════════════════════════════
 //  SECRET ADMIN HASH
-//  Достъп до админ панела: yoursite.com/index.html#admin-mlbb2025bg
-//  Смени тайната дума по-долу — пази я само за себе си!
 // ══════════════════════════════════════════════
 const ADMIN_SECRET = 'mlbb2025bg';
 
 function checkAdminAccess() {
     const params = new URLSearchParams(window.location.search);
     const hash   = window.location.hash;
-    // Works on CodePen (?admin=secret) and Netlify/other sites (#secret)
     if (params.get('admin') === ADMIN_SECRET || hash.includes(ADMIN_SECRET)) {
         document.getElementById('adminTabBtn').style.display = '';
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -840,7 +837,7 @@ function switchTab(e, tabName) {
 }
 
 // ══════════════════════════════════════════════
-//  FORMSPREE AJAX SUBMIT
+//  SUBMIT
 // ══════════════════════════════════════════════
 async function handleSubmit(e) {
     e.preventDefault();
@@ -851,7 +848,6 @@ async function handleSubmit(e) {
     const winrate = document.getElementById('winrate').value;
     const roles   = getSelectedRoles();
 
-    // Client-side validation — show specific error for each missing field
     const errors = [];
     if (!ign)              errors.push('❌ IGN е задължително');
     if (!discord)          errors.push('❌ Discord е задължително');
@@ -861,7 +857,6 @@ async function handleSubmit(e) {
 
     if (errors.length > 0) {
         showMessage('regMessage', errors.join('  |  '), 'error');
-        // Also highlight the empty fields visually
         const fieldMap = {ign: ign, discord: discord, rank: rank, winrate: winrate};
         Object.entries(fieldMap).forEach(([id, val]) => {
             const el = document.getElementById(id);
@@ -870,7 +865,6 @@ async function handleSubmit(e) {
         return;
     }
 
-    // Reset border colors on valid submit
     ['ign','discord','rank','winrate'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.borderColor = '';
@@ -885,7 +879,6 @@ async function handleSubmit(e) {
     submitBtn.disabled = true;
     submitBtn.textContent = '⏳ Изпращане...';
 
-    // Re-read roles fresh at submit time to avoid stale values
     const freshRoles = getSelectedRoles();
     const payload = JSON.stringify({
         ign:        ign,
@@ -900,14 +893,12 @@ async function handleSubmit(e) {
     });
 
     try {
-        // Google Apps Script requires no-cors mode from browser
         await fetch('https://script.google.com/macros/s/AKfycbyAkclGB7MtKb_5zGun9ypbxC4DQTW5hvGzW4fRmCxm5Mnu1WOoRvmhEIYgHSFnvjGOKg/exec', {
             method: 'POST',
             body: payload,
             mode: 'no-cors'
         });
 
-        // no-cors always returns opaque response so we assume success if no exception
         participants.push({
             id: Date.now(),
             ign,
@@ -925,7 +916,6 @@ async function handleSubmit(e) {
         localStorage.setItem('mlbb_participants', JSON.stringify(participants));
         updateStats();
 
-        // Show success screen
         document.getElementById('formWrapper').style.display = 'none';
         document.getElementById('successState').classList.add('show');
 
@@ -949,7 +939,6 @@ function showFormAgain() {
 //  HELPERS
 // ══════════════════════════════════════════════
 function getSelectedRoles() {
-    // Map each role to its exact checkbox id
     const roleMap = {
         'Mid laner':  'role_mid',
         'Marksman':   'role_marksman',
@@ -976,15 +965,13 @@ function clearForm() {
     document.getElementById('registrationForm').reset();
 }
 
-function updateStats() {
-    // Stats display replaced by countdown timer
-}
+function updateStats() {}
 
 // ══════════════════════════════════════════════
-//  COUNTDOWN TIMER
+//  COUNTDOWN TIMER  →  17 April 2026, 09:00:00
 // ══════════════════════════════════════════════
 (function initCountdown() {
-    const DEADLINE = new Date('2026-04-17T23:59:59');
+    const DEADLINE = new Date('2026-04-17T09:00:00');
     const elDays  = document.getElementById('cdDays');
     const elHours = document.getElementById('cdHours');
     const elMins  = document.getElementById('cdMins');
@@ -1014,7 +1001,7 @@ function updateStats() {
         el.classList.add('tick');
     }
     function update() {
-        const diff = new Date('2026-04-17T23:59:59') - new Date();
+        const diff = DEADLINE - new Date();
         if (diff <= 0) {
             if (wrap) wrap.innerHTML = '<div class="cd-expired">🔒 РЕГИСТРАЦИЯТА Е ПРИКЛЮЧИЛА</div>';
             return;
@@ -1144,7 +1131,6 @@ function exportToCSV() {
             this.life   = 0;
             this.maxLife = 120 + Math.random() * 180;
             this.twinkle = Math.random() * Math.PI * 2;
-            // some sparks have a trail
             this.trail  = Math.random() > 0.7;
             this.history = [];
         }
@@ -1166,7 +1152,6 @@ function exportToCSV() {
             if (this.life > this.maxLife) this.reset(false);
         }
         draw() {
-            // Draw trail
             if (this.trail && this.history.length > 1) {
                 for (let i = 1; i < this.history.length; i++) {
                     const a = (i / this.history.length) * this.alpha * 0.5;
@@ -1178,12 +1163,10 @@ function exportToCSV() {
                     ctx.stroke();
                 }
             }
-            // Draw spark
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fillStyle = this.color + this.alpha + ')';
             ctx.fill();
-            // Glow
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
             const grd = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
@@ -1238,7 +1221,6 @@ function exportToCSV() {
         }
     }
 
-    // Create particles
     const sparks = Array.from({length: 120}, () => new Spark());
     const stars  = Array.from({length: 4},  () => new ShootingStar());
 
@@ -1250,7 +1232,6 @@ function exportToCSV() {
     }
     animate();
 
-    // Burst on click
     document.addEventListener('click', (e) => {
         const burst = Array.from({length: 12}, () => {
             const s = new Spark();
